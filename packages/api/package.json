@@ -19,6 +19,7 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
+    "@nestjs/cli": "^11.0.10",
     "@nestjs/common": "^11.1.7",
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.1.7",
@@ -38,7 +39,6 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.38.0",
-    "@nestjs/cli": "^11.0.10",
     "@nestjs/schematics": "^11.0.9",
     "@types/cookie-parser": "^1.4.10",
     "@types/express": "^5.0.4",
