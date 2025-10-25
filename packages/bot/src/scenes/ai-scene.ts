@@ -36,7 +36,7 @@ aiScene.on('text', async (ctx) => {
 
     try {
         const completion = await groq.chat.completions.create({
-            model: "llama-3.2-90b-text",
+            model: "llama3-8b-8192",
             messages: [
                 {
                     role: 'system',
