@@ -7,7 +7,6 @@
     "dev": "nest start --watch",
     "build": "nest build",
     "start": "node dist/main",
-    "start:prod": "node dist/main",
     "lint": "eslint . --ext ts --report-unused-disable-directives --max-warnings 0",
     "lint:fix": "eslint . --ext ts --fix",
     "format": "prettier --write \"src/**/*.{ts,json}\"",

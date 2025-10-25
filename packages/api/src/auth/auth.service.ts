@@ -1,11 +1,11 @@
 import * as crypto from 'crypto'
 
 import { Injectable } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
+import { JwtService } from '@nestjs/jwt'
 
-import type { PrismaService } from '../prisma/prisma.service'
+import { PrismaService } from '../prisma/prisma.service'
 import type { JwtPayload } from './strategies/jwt.strategy'
-import type { ConfigService } from '@nestjs/config'
-import type { JwtService } from '@nestjs/jwt'
 
 @Injectable()
 export class AuthService {

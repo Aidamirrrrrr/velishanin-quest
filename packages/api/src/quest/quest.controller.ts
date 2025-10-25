@@ -4,7 +4,7 @@ import { CurrentUser, type CurrentUserData } from '../auth/decorators/current-us
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard'
 
 import type { SubmitQuestDto } from './dto/submit-quest.dto'
-import type { QuestService } from './quest.service'
+import { QuestService } from './quest.service'
 
 @Controller('api/quest')
 export class QuestController {

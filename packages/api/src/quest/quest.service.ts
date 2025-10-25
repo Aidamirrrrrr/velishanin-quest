@@ -4,7 +4,7 @@ import { PROGRAMMING_QUEST } from './quests/programming-quest'
 
 import type { AnswerDto } from './dto/submit-quest.dto'
 import type { Quest } from './types/quest.types'
-import type { PrismaService } from '../prisma/prisma.service'
+import { PrismaService } from '../prisma/prisma.service'
 
 @Injectable()
 export class QuestService {

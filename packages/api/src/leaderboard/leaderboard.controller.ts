@@ -1,6 +1,6 @@
 import { Controller, Get, Query } from '@nestjs/common'
 
-import type { LeaderboardService } from './leaderboard.service'
+import { LeaderboardService } from './leaderboard.service'
 
 @Controller('api/leaderboard')
 export class LeaderboardController {
