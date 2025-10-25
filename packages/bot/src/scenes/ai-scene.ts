@@ -17,10 +17,10 @@ aiScene.enter(async (ctx) => {
     ctx.scene.session.waitingForQuestion = true
     await ctx.reply(
         '🤖 Задай мне вопрос по программированию:\n\n' +
-            'Например:\n' +
-            '• Что такое TypeScript?\n' +
-            '• Как работает async/await?\n' +
-            '• В чём разница между map и forEach?',
+        'Например:\n' +
+        '• Что такое TypeScript?\n' +
+        '• Как работает async/await?\n' +
+        '• В чём разница между map и forEach?',
         Markup.inlineKeyboard([[Markup.button.callback('❌ Отмена', 'cancel_ai')]])
     )
 })
@@ -36,7 +36,7 @@ aiScene.on('text', async (ctx) => {
 
     try {
         const completion = await groq.chat.completions.create({
-            model: 'llama-3.1-70b-versatile',
+            model: "llama-3.2-90b-text",
             messages: [
                 {
                     role: 'system',
