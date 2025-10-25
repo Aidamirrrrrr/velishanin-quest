@@ -1,0 +1,48 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         Int      @id @default(autoincrement())
+  telegramId BigInt   @unique
+  firstName  String
+  username   String?
+  isPremium  Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  questResults QuestResult[]
+
+  @@map("users")
+}
+
+model QuestResult {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  questId     String
+  score       Int
+  answers     Json
+  completedAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("quest_results")
+  @@index([userId])
+  @@index([questId])
+}
+
+model AIConversation {
+  id         Int      @id @default(autoincrement())
+  telegramId BigInt
+  message    String
+  response   String
+  createdAt  DateTime @default(now())
+
+  @@map("ai_conversations")
+  @@index([telegramId])
+}
