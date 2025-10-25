@@ -31,9 +31,6 @@ Thumbs.db
 *.swp
 *.swo
 
-# Prisma
-**/prisma/migrations
-
 # Temp
 *.tmp
 .cache
