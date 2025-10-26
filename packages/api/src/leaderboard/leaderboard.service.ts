@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common'
 
-import type { LeaderboardEntry } from './types/leaderboard.types'
 import { PrismaService } from '../prisma/prisma.service'
+
+import type { LeaderboardEntry } from './types/leaderboard.types'
 
 @Injectable()
 export class LeaderboardService {
-    constructor(private prisma: PrismaService) {}
+    constructor(private prisma: PrismaService) { }
 
     public async getLeaderboard(limit: number = 10): Promise<LeaderboardEntry[]> {
         const users = await this.prisma.user.findMany({

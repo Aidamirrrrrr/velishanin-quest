@@ -1,11 +1,11 @@
 import { Controller, Post, Body, Res, HttpCode, HttpStatus } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 
+import { AuthService } from './auth.service'
 import { jwtTimeToMilliseconds } from './utils/jwt-time.util'
 
 import type { TelegramAuthDto } from './dto/telegram-auth.dto'
 import type { Response } from 'express'
-import { AuthService } from './auth.service'
 
 @Controller('api/auth')
 export class AuthController {

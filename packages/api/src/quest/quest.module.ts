@@ -10,4 +10,4 @@ import { PrismaModule } from '../prisma/prisma.module'
     providers: [QuestService],
     exports: [QuestService],
 })
-export class QuestModule { }
+export class QuestModule {}

@@ -1,8 +1,12 @@
+import { createServer } from 'http'
+
 import { Telegraf, Markup, session, Scenes } from 'telegraf'
 
 import { config } from './config'
 import { aiScene } from './scenes/ai-scene'
 import { questScene } from './scenes/quest-scene'
+
+type ShutdownSignal = 'SIGINT' | 'SIGTERM'
 
 const bot = new Telegraf<Scenes.SceneContext>(config.TELEGRAM_BOT_TOKEN)
 
@@ -76,14 +80,14 @@ bot.hears('ℹ️ О боте', async (ctx) => {
             `• NestJS + Prisma\n` +
             `• React + TailwindCSS\n` +
             `• PostgreSQL\n\n` +
-            `Разработано с ❤️ для тестового задания`,
+            `Разработано для тестового задания`,
         Markup.inlineKeyboard([[Markup.button.callback('◀️ Назад в меню', 'back_to_menu')]])
     )
 })
 
 bot.action('back_to_menu', async (ctx) => {
     await ctx.answerCbQuery()
-    await ctx.editMessageText('Выбери действие:')
+    await ctx.deleteMessage().catch(() => undefined)
     await ctx.reply(
         'Главное меню:',
         Markup.keyboard([
@@ -106,10 +110,33 @@ bot.action('ask_ai', async (ctx) => {
 bot.use(questScene.middleware())
 bot.use(aiScene.middleware())
 
+const healthServer = createServer((req, res) => {
+    if (req.method === 'GET' && req.url === '/healthz') {
+        res.writeHead(200, { 'Content-Type': 'application/json' })
+        res.end(JSON.stringify({ status: 'ok' }))
+        return
+    }
+
+    res.writeHead(404, { 'Content-Type': 'application/json' })
+    res.end(JSON.stringify({ error: 'Not Found' }))
+})
+
+healthServer.listen(config.HEALTHCHECK_PORT, () => {
+    console.log(`🩺 Healthcheck server listening on port ${config.HEALTHCHECK_PORT}`)
+})
+
 bot.launch().then(() => {
     console.log('🤖 Bot started successfully!')
     console.log(`📱 Bot username: @${bot.botInfo?.username}`)
 })
 
-process.once('SIGINT', () => bot.stop('SIGINT'))
-process.once('SIGTERM', () => bot.stop('SIGTERM'))
+const shutdown = (signal: ShutdownSignal) => {
+    console.log(`Received ${signal}, shutting down...`)
+    healthServer.close(() => {
+        console.log('🩺 Healthcheck server stopped')
+    })
+    bot.stop(signal)
+}
+
+process.once('SIGINT', () => shutdown('SIGINT'))
+process.once('SIGTERM', () => shutdown('SIGTERM'))

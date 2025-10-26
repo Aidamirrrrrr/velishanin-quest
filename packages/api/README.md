@@ -42,19 +42,24 @@ src/
 ## API Endpoints
 
 ### Auth
+
 - `POST /api/auth/telegram` - Авторизация через Telegram WebApp (возвращает JWT в cookie)
 
 ### Leaderboard
+
 - `GET /api/leaderboard?limit=10` - Получить таблицу лидеров
 
 ### User
+
 - `GET /api/user/:telegramId` - Получить статистику пользователя
 
 ### Quest
+
 - `GET /api/quest/:id` - Получить квест по ID
 - `POST /api/quest/submit` - Отправить результаты квеста (требует JWT)
 
 ### Bot (без JWT)
+
 - `POST /api/bot/quest/submit` - Отправить результаты от бота (с telegramId)
 
 ## База данных
@@ -85,11 +90,13 @@ model QuestResult {
 ## Разработка
 
 ### Установка зависимостей:
+
 ```bash
 pnpm install
 ```
 
 ### Настройка базы данных:
+
 ```bash
 # Генерация Prisma Client
 pnpm db:generate
@@ -102,6 +109,7 @@ pnpm db:studio
 ```
 
 ### Запуск dev сервера:
+
 ```bash
 pnpm dev
 ```
@@ -109,16 +117,19 @@ pnpm dev
 API будет доступен на `http://localhost:3001`
 
 ### Сборка:
+
 ```bash
 pnpm build
 ```
 
 ### Production:
+
 ```bash
 pnpm start:prod
 ```
 
 ### Проверка:
+
 ```bash
 # TypeScript
 pnpm type-check
@@ -148,17 +159,20 @@ CORS_ORIGIN="*"
 ## Авторизация
 
 ### Telegram WebApp
+
 1. Frontend отправляет `initData` от Telegram
 2. API валидирует подпись через HMAC
 3. Создает/находит пользователя в БД
 4. Возвращает JWT в httpOnly cookie
 
 ### JWT Cookie
+
 - `httpOnly: true` - защита от XSS
 - `secure: true` (production) - только HTTPS
 - `sameSite: 'lax'` - защита от CSRF
 
 ### Защищенные эндпоинты
+
 Используют `@UseGuards(JwtAuthGuard)` и декоратор `@CurrentUser()`
 
 ## Валидация
@@ -176,17 +190,20 @@ export class TelegramAuthDto {
 ## CORS
 
 Настроен для работы с Telegram Mini App:
+
 - Credentials: true
 - Origin: configurable через env
 
 ## Мониторинг
 
 ### Health Check
+
 ```bash
 curl http://localhost:3001/api/health
 ```
 
 ### Logs
+
 ```bash
 # Development - автоматические логи NestJS
 # Production - настроить winston/pino

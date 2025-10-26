@@ -5,6 +5,20 @@ class Config {
         return process.env[key]
     }
 
+    private getNumber(key: string, fallback: number): number {
+        const value = this.get(key)
+        if (!value) {
+            return fallback
+        }
+
+        const parsed = Number(value)
+        if (Number.isNaN(parsed)) {
+            throw new Error(`Environment variable ${key} must be a valid number`)
+        }
+
+        return parsed
+    }
+
     private getOrThrow(key: string): string {
         const value = this.get(key)
         if (!value) {
@@ -31,6 +45,10 @@ class Config {
 
     public get NODE_ENV(): string {
         return this.getOrThrow('NODE_ENV')
+    }
+
+    public get HEALTHCHECK_PORT(): number {
+        return this.getNumber('BOT_HEALTHCHECK_PORT', 3000)
     }
 }
 

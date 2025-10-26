@@ -37,11 +37,13 @@ src/
 ## API интеграция
 
 ### Endpoints:
+
 - `POST /api/auth/telegram` - Авторизация через Telegram WebApp
 - `GET /api/leaderboard?limit=10` - Получить таблицу лидеров
 - `GET /api/user/:telegramId` - Получить статистику пользователя
 
 ### Авторизация:
+
 - JWT токен в httpOnly cookie
 - Telegram `initData` для валидации
 - Автоматическая авторизация при открытии
@@ -49,6 +51,7 @@ src/
 ## Разработка
 
 ### Запуск dev сервера:
+
 ```bash
 pnpm dev
 ```
@@ -56,6 +59,7 @@ pnpm dev
 Приложение откроется на `http://localhost:3000`
 
 ### Сборка:
+
 ```bash
 pnpm build
 ```
@@ -63,11 +67,13 @@ pnpm build
 Результат в папке `dist/`
 
 ### Проверка типов:
+
 ```bash
 pnpm type-check
 ```
 
 ### Линтинг:
+
 ```bash
 pnpm lint
 ```
@@ -83,18 +89,21 @@ VITE_API_URL="http://localhost:3001"
 ## Особенности
 
 ### Telegram WebApp SDK
+
 - Интеграция с Telegram WebApp API
 - Автоматическое получение `initData`
 - Адаптация под тему Telegram
 - Управление кнопками (BackButton, MainButton)
 
 ### UI/UX
+
 - Адаптивный дизайн (mobile-first)
 - Темная тема по умолчанию
 - Плавные анимации
 - Telegram-подобный интерфейс
 
 ### Производительность
+
 - Code splitting
 - Lazy loading страниц
 - Оптимизированные запросы (React Query)

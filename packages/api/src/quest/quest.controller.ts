@@ -1,10 +1,10 @@
 import { Controller, Post, Body, Get, Param, UseGuards } from '@nestjs/common'
 
+import { QuestService } from './quest.service'
 import { CurrentUser, type CurrentUserData } from '../auth/decorators/current-user.decorator'
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard'
 
 import type { SubmitQuestDto } from './dto/submit-quest.dto'
-import { QuestService } from './quest.service'
 
 @Controller('api/quest')
 export class QuestController {

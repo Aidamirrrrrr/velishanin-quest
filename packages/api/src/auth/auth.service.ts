@@ -5,6 +5,7 @@ import { ConfigService } from '@nestjs/config'
 import { JwtService } from '@nestjs/jwt'
 
 import { PrismaService } from '../prisma/prisma.service'
+
 import type { JwtPayload } from './strategies/jwt.strategy'
 
 @Injectable()
