@@ -29,7 +29,6 @@ export class QuestService {
             throw new Error('Quest not found')
         }
 
-        // Find or create user
         let user = await this.prisma.user.findUnique({
             where: { telegramId },
         })
@@ -46,8 +45,11 @@ export class QuestService {
         }
 
         let totalScore = 0
-        const processedAnswers = answers.map((answer, index) => {
-            const question = quest.questions[index]
+        const processedAnswers = answers.map((answer) => {
+            const question = quest.questions.find((q) => q.id === answer.questionId)
+            if (!question) {
+                throw new Error(`Question ${answer.questionId} not found`)
+            }
             const isCorrect = answer.selectedOption === question.correctAnswer
             const pointsEarned = isCorrect ? question.points : 0
             totalScore += pointsEarned
