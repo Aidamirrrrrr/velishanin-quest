@@ -1,7 +1,7 @@
 import { Type } from 'class-transformer'
 import { IsNumber, IsString, IsNotEmpty, IsArray, ValidateNested } from 'class-validator'
 
-class BotAnswerDto {
+export class BotAnswerDto {
     @IsString()
     @IsNotEmpty()
     public questionId: string

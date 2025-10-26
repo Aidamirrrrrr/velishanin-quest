@@ -1,8 +1,7 @@
-import { Controller, Post, Body } from '@nestjs/common'
+import { Controller, Post, Body, Logger } from '@nestjs/common'
 
 import { QuestService } from '../quest/quest.service'
-
-import type { BotSubmitQuestDto } from './dto/bot-submit-quest.dto'
+import { BotSubmitQuestDto } from './dto/bot-submit-quest.dto'
 
 @Controller('api/bot/quest')
 export class BotQuestController {
