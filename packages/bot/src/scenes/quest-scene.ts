@@ -92,14 +92,6 @@ questScene.action(/answer_(\d+)/, async (ctx) => {
                     [Markup.button.callback('🔄 Пройти ещё раз', 'restart_quest')],
                 ])
             )
-            
-            await ctx.reply(
-                'Главное меню:',
-                Markup.keyboard([
-                    ['🎯 Пройти квест', '🤖 Получить совет от ИИ'],
-                    ['🏆 Открыть мини-приложение', 'ℹ️ О боте'],
-                ]).resize()
-            )
         } catch (error: unknown) {
             console.error('Error submitting quest:', error)
             const message =

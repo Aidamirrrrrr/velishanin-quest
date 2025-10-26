@@ -60,14 +60,6 @@ aiScene.on('text', async (ctx) => {
             ])
         )
         
-        await ctx.reply(
-            'Главное меню:',
-            Markup.keyboard([
-                ['🎯 Пройти квест', '🤖 Получить совет от ИИ'],
-                ['🏆 Открыть мини-приложение', 'ℹ️ О боте'],
-            ]).resize()
-        )
-
         ctx.scene.session.waitingForQuestion = false
     } catch (error: unknown) {
         console.error('Groq Error:', error)
@@ -83,15 +75,6 @@ aiScene.on('text', async (ctx) => {
         }
 
         await ctx.reply(`❌ ${errorMessage}`)
-        
-        await ctx.reply(
-            'Главное меню:',
-            Markup.keyboard([
-                ['🎯 Пройти квест', '🤖 Получить совет от ИИ'],
-                ['🏆 Открыть мини-приложение', 'ℹ️ О боте'],
-            ]).resize()
-        )
-        
         return ctx.scene.leave()
     }
 })
@@ -104,13 +87,6 @@ aiScene.action('ask_more', async (ctx) => {
 
 aiScene.action('cancel_ai', async (ctx) => {
     await ctx.answerCbQuery('Отменено')
-    await ctx.reply(
-        'Главное меню:',
-        Markup.keyboard([
-            ['🎯 Пройти квест', '🤖 Получить совет от ИИ'],
-            ['🏆 Открыть мини-приложение', 'ℹ️ О боте'],
-        ]).resize()
-    )
     return ctx.scene.leave()
 })
 
