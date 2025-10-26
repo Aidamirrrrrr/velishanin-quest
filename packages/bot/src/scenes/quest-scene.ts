@@ -8,6 +8,7 @@ import type { Answer } from '../types/quest.types'
 interface QuestSessionData extends Scenes.SceneSessionData {
     currentQuestion: number
     answers: Omit<Answer, 'isCorrect' | 'pointsEarned'>[]
+    currentQuestionId?: string
 }
 
 export const questScene = new Scenes.BaseScene<Scenes.SceneContext<QuestSessionData>>('quest')
@@ -25,6 +26,8 @@ questScene.enter(async (ctx) => {
         }
 
         const question = quest.questions[0]
+        ctx.scene.session.currentQuestionId = question.id
+        
         await ctx.reply(
             `❓ Вопрос 1 из 3\n\n${question.text}`,
             Markup.inlineKeyboard(
@@ -41,18 +44,19 @@ questScene.enter(async (ctx) => {
 questScene.action(/answer_(\d+)/, async (ctx) => {
     await ctx.answerCbQuery()
 
-    if (!ctx.scene.session.answers || ctx.scene.session.currentQuestion === undefined) {
+    if (!ctx.scene.session.answers || ctx.scene.session.currentQuestion === undefined || !ctx.scene.session.currentQuestionId) {
         await ctx.reply('⚠️ Сессия истекла. Пожалуйста, начните квест заново с команды /start')
         return ctx.scene.leave()
     }
 
     const selectedOption = parseInt(ctx.match[1])
-    const currentQ = ctx.scene.session.currentQuestion
 
     ctx.scene.session.answers.push({
-        questionId: `q${currentQ + 1}`,
+        questionId: ctx.scene.session.currentQuestionId,
         selectedOption,
     })
+
+    console.log(`Answer saved: questionId=${ctx.scene.session.currentQuestionId}, selectedOption=${selectedOption}`)
 
     ctx.scene.session.currentQuestion += 1
 
@@ -60,6 +64,8 @@ questScene.action(/answer_(\d+)/, async (ctx) => {
         try {
             const quest = await apiService.getQuest('programming')
             const question = quest.questions[ctx.scene.session.currentQuestion]
+            
+            ctx.scene.session.currentQuestionId = question.id
 
             await ctx.editMessageText(
                 `❓ Вопрос ${ctx.scene.session.currentQuestion + 1} из 3\n\n${question.text}`,
@@ -83,6 +89,14 @@ questScene.action(/answer_(\d+)/, async (ctx) => {
                 return ctx.scene.leave()
             }
 
+            await ctx.editMessageText('⏳ Обрабатываем результаты...')
+
+            console.log('=== Submitting quest results ===')
+            console.log('User:', { telegramId, firstName, username })
+            console.log('Quest ID:', 'programming')
+            console.log('Answers:', JSON.stringify(ctx.scene.session.answers, null, 2))
+            console.log('================================')
+
             const result = await apiService.submitQuest(telegramId, firstName, username, 'programming', ctx.scene.session.answers)
 
             const { totalScore, maxScore, percentage } = result
@@ -99,18 +113,30 @@ questScene.action(/answer_(\d+)/, async (ctx) => {
             )
         } catch (error: unknown) {
             console.error('Error submitting quest:', error)
-            console.error('Error details:', JSON.stringify(error, null, 2))
             
             let message = 'Попробуйте позже'
             if (error && typeof error === 'object') {
                 if ('response' in error && error.response && typeof error.response === 'object') {
-                    console.error('Response error:', JSON.stringify(error.response, null, 2))
-                    if ('data' in error.response && error.response.data && typeof error.response.data === 'object' && 'message' in error.response.data) {
-                        message = String(error.response.data.message)
+                    const response = error.response as any
+                    console.error('API Response Error:')
+                    console.error('  Status:', response.status)
+                    console.error('  Status Text:', response.statusText)
+                    console.error('  Data:', response.data)
+                    
+                    if ('data' in response && response.data && typeof response.data === 'object' && 'message' in response.data) {
+                        message = String(response.data.message)
+                    } else if (response.status === 502) {
+                        message = 'API сервер временно недоступен. Попробуйте позже.'
                     }
                 } else if ('message' in error) {
-                    console.error('Error message:', error.message)
-                    message = String(error.message)
+                    const errorMessage = String((error as any).message)
+                    console.error('Error message:', errorMessage)
+                    
+                    if (errorMessage.includes('502')) {
+                        message = 'API сервер временно недоступен. Попробуйте позже.'
+                    } else {
+                        message = errorMessage
+                    }
                 }
             }
             
