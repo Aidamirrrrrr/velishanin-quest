@@ -41,6 +41,11 @@ questScene.enter(async (ctx) => {
 questScene.action(/answer_(\d+)/, async (ctx) => {
     await ctx.answerCbQuery()
 
+    if (!ctx.scene.session.answers || ctx.scene.session.currentQuestion === undefined) {
+        await ctx.reply('⚠️ Сессия истекла. Пожалуйста, начните квест заново с команды /start')
+        return ctx.scene.leave()
+    }
+
     const selectedOption = parseInt(ctx.match[1])
     const currentQ = ctx.scene.session.currentQuestion
 
@@ -94,18 +99,21 @@ questScene.action(/answer_(\d+)/, async (ctx) => {
             )
         } catch (error: unknown) {
             console.error('Error submitting quest:', error)
-            const message =
-                error &&
-                typeof error === 'object' &&
-                'response' in error &&
-                error.response &&
-                typeof error.response === 'object' &&
-                'data' in error.response &&
-                error.response.data &&
-                typeof error.response.data === 'object' &&
-                'message' in error.response.data
-                    ? String(error.response.data.message)
-                    : 'Попробуйте позже'
+            console.error('Error details:', JSON.stringify(error, null, 2))
+            
+            let message = 'Попробуйте позже'
+            if (error && typeof error === 'object') {
+                if ('response' in error && error.response && typeof error.response === 'object') {
+                    console.error('Response error:', JSON.stringify(error.response, null, 2))
+                    if ('data' in error.response && error.response.data && typeof error.response.data === 'object' && 'message' in error.response.data) {
+                        message = String(error.response.data.message)
+                    }
+                } else if ('message' in error) {
+                    console.error('Error message:', error.message)
+                    message = String(error.message)
+                }
+            }
+            
             await ctx.reply(`Ошибка сохранения результатов:\n${message}`)
         }
 

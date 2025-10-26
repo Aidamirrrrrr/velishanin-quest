@@ -15,6 +15,17 @@ const stage = new Scenes.Stage<Scenes.SceneContext>([questScene, aiScene])
 bot.use(session())
 bot.use(stage.middleware())
 
+bot.catch((err, ctx) => {
+    console.error('Unhandled error while processing', ctx.update)
+    console.error('Error:', err)
+    
+    try {
+        ctx.reply('⚠️ Произошла ошибка. Пожалуйста, попробуйте снова или начните заново с команды /start').catch(console.error)
+    } catch (replyError) {
+        console.error('Failed to send error message to user:', replyError)
+    }
+})
+
 bot.use(async (ctx, next) => {
     const start = Date.now()
     await next()

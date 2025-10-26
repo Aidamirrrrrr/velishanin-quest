@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, Logger, NotFoundException } from '@nestjs/common'
 
 import { PrismaService } from '../prisma/prisma.service'
 import { PROGRAMMING_QUEST } from './quests/programming-quest'
@@ -8,12 +8,17 @@ import type { Quest } from './types/quest.types'
 
 @Injectable()
 export class QuestService {
+    private readonly logger = new Logger(QuestService.name)
+
     constructor(private prisma: PrismaService) {}
 
     public async getQuestById(id: string): Promise<Quest | null> {
+        this.logger.debug(`Fetching quest by id: ${id}`)
         if (id === 'programming') {
+            this.logger.debug('Returning PROGRAMMING_QUEST')
             return PROGRAMMING_QUEST
         }
+        this.logger.warn(`Quest not found for id: ${id}`)
         return null
     }
 
@@ -24,9 +29,13 @@ export class QuestService {
         questId: string,
         answers: AnswerDto[]
     ) {
+        this.logger.log(`Submitting quest: ${questId} for user: ${telegramId}`)
+        this.logger.debug(`Received answers: ${JSON.stringify(answers)}`)
+        
         const quest = await this.getQuestById(questId)
         if (!quest) {
-            throw new Error('Quest not found')
+            this.logger.error(`Quest not found: ${questId}`)
+            throw new NotFoundException(`Quest with id '${questId}' not found`)
         }
 
         let user = await this.prisma.user.findUnique({
@@ -48,7 +57,9 @@ export class QuestService {
         const processedAnswers = answers.map((answer) => {
             const question = quest.questions.find((q) => q.id === answer.questionId)
             if (!question) {
-                throw new Error(`Question ${answer.questionId} not found`)
+                this.logger.error(`Question not found: ${answer.questionId} in quest: ${questId}`)
+                this.logger.error(`Available questions: ${quest.questions.map(q => q.id).join(', ')}`)
+                throw new NotFoundException(`Question ${answer.questionId} not found in quest ${questId}`)
             }
             const isCorrect = answer.selectedOption === question.correctAnswer
             const pointsEarned = isCorrect ? question.points : 0
