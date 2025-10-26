@@ -18,6 +18,12 @@ export class QuestController {
     @Post('submit')
     @UseGuards(JwtAuthGuard)
     public async submitQuest(@CurrentUser() user: CurrentUserData, @Body() body: SubmitQuestDto) {
-        return this.questService.submitQuest(Number(user.telegramId), body.questId, body.answers)
+        return this.questService.submitQuest(
+            Number(user.telegramId),
+            user.firstName,
+            user.username || undefined,
+            body.questId,
+            body.answers
+        )
     }
 }

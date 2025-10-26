@@ -10,6 +10,12 @@ export class BotQuestController {
 
     @Post('submit')
     public async submitQuest(@Body() body: BotSubmitQuestDto) {
-        return this.questService.submitQuest(body.telegramId, body.questId, body.answers)
+        return this.questService.submitQuest(
+            body.telegramId,
+            body.firstName,
+            body.username,
+            body.questId,
+            body.answers
+        )
     }
 }

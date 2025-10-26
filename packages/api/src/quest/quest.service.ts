@@ -17,18 +17,32 @@ export class QuestService {
         return null
     }
 
-    public async submitQuest(telegramId: number, questId: string, answers: AnswerDto[]) {
+    public async submitQuest(
+        telegramId: number,
+        firstName: string,
+        username: string | undefined,
+        questId: string,
+        answers: AnswerDto[]
+    ) {
         const quest = await this.getQuestById(questId)
         if (!quest) {
             throw new Error('Quest not found')
         }
 
+        // Find or create user
         let user = await this.prisma.user.findUnique({
             where: { telegramId },
         })
 
         if (!user) {
-            throw new Error('User not found. Please authenticate first.')
+            user = await this.prisma.user.create({
+                data: {
+                    telegramId,
+                    firstName,
+                    username,
+                    isPremium: false,
+                },
+            })
         }
 
         let totalScore = 0

@@ -37,20 +37,24 @@ bot.command('start', async (ctx) => {
 bot.hears('🎯 Пройти квест', async (ctx) => {
     await ctx.reply(
         '🎮 Готов начать квест?\n\nЯ задам тебе 3 вопроса по программированию.\nЗа каждый правильный ответ — 10 очков!\n\nУдачи! 🚀',
-        Markup.inlineKeyboard([
-            [Markup.button.callback('▶️ Начать квест', 'start_quest')],
-            [Markup.button.callback('◀️ Назад в меню', 'back_to_menu')],
-        ])
+        {
+            ...Markup.inlineKeyboard([
+                [Markup.button.callback('▶️ Начать квест', 'start_quest')],
+            ]),
+            ...Markup.removeKeyboard(),
+        }
     )
 })
 
 bot.hears('🤖 Получить совет от ИИ', async (ctx) => {
     await ctx.reply(
         '🤖 AI Советчик активирован!\n\nЗадай мне любой вопрос по программированию, и я постараюсь помочь.\n\nПримеры вопросов:\n• Что такое async/await?\n• Как работает замыкание?\n• В чём разница между let и const?',
-        Markup.inlineKeyboard([
-            [Markup.button.callback('❓ Задать вопрос', 'ask_ai')],
-            [Markup.button.callback('◀️ Назад в меню', 'back_to_menu')],
-        ])
+        {
+            ...Markup.inlineKeyboard([
+                [Markup.button.callback('❓ Задать вопрос', 'ask_ai')],
+            ]),
+            ...Markup.removeKeyboard(),
+        }
     )
 })
 
@@ -59,10 +63,12 @@ bot.hears('🏆 Открыть мини-приложение', async (ctx) => {
 
     await ctx.reply(
         '🎨 Мини-приложение\n\nЗдесь ты можешь:\n• Посмотреть таблицу лидеров\n• Проверить свою статистику\n• Увидеть достижения',
-        Markup.inlineKeyboard([
-            [Markup.button.webApp('🚀 Открыть приложение', webAppUrl)],
-            [Markup.button.callback('◀️ Назад в меню', 'back_to_menu')],
-        ])
+        {
+            ...Markup.inlineKeyboard([
+                [Markup.button.webApp('🚀 Открыть приложение', webAppUrl)],
+            ]),
+            ...Markup.removeKeyboard(),
+        }
     )
 })
 
@@ -81,21 +87,10 @@ bot.hears('ℹ️ О боте', async (ctx) => {
         `• React + TailwindCSS\n` +
         `• PostgreSQL\n\n` +
         `Разработано для тестового задания`,
-        Markup.inlineKeyboard([[Markup.button.callback('◀️ Назад в меню', 'back_to_menu')]])
+        Markup.removeKeyboard()
     )
 })
 
-bot.action('back_to_menu', async (ctx) => {
-    await ctx.answerCbQuery()
-    await ctx.deleteMessage().catch(() => undefined)
-    await ctx.reply(
-        'Главное меню:',
-        Markup.keyboard([
-            ['🎯 Пройти квест', '🤖 Получить совет от ИИ'],
-            ['🏆 Открыть мини-приложение', 'ℹ️ О боте'],
-        ]).resize()
-    )
-})
 
 bot.action('start_quest', async (ctx) => {
     await ctx.answerCbQuery()

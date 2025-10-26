@@ -21,9 +21,17 @@ export class ApiService {
         return response.data
     }
 
-    public async submitQuest(telegramId: number, questId: string, answers: Omit<Answer, 'isCorrect' | 'pointsEarned'>[]) {
+    public async submitQuest(
+        telegramId: number,
+        firstName: string,
+        username: string | undefined,
+        questId: string,
+        answers: Omit<Answer, 'isCorrect' | 'pointsEarned'>[]
+    ) {
         const response = await this.client.post('/api/bot/quest/submit', {
             telegramId,
+            firstName,
+            username,
             questId,
             answers,
         })

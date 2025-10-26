@@ -57,8 +57,15 @@ aiScene.on('text', async (ctx) => {
             `💡 ${answer}`,
             Markup.inlineKeyboard([
                 [Markup.button.callback('❓ Задать ещё вопрос', 'ask_more')],
-                [Markup.button.callback('◀️ Главное меню', 'back_to_menu')],
             ])
+        )
+        
+        await ctx.reply(
+            'Главное меню:',
+            Markup.keyboard([
+                ['🎯 Пройти квест', '🤖 Получить совет от ИИ'],
+                ['🏆 Открыть мини-приложение', 'ℹ️ О боте'],
+            ]).resize()
         )
 
         ctx.scene.session.waitingForQuestion = false
@@ -75,8 +82,16 @@ aiScene.on('text', async (ctx) => {
             }
         }
 
-        await ctx.reply(`❌ ${errorMessage}`, Markup.inlineKeyboard([[Markup.button.callback('◀️ Главное меню', 'back_to_menu')]]))
-
+        await ctx.reply(`❌ ${errorMessage}`)
+        
+        await ctx.reply(
+            'Главное меню:',
+            Markup.keyboard([
+                ['🎯 Пройти квест', '🤖 Получить совет от ИИ'],
+                ['🏆 Открыть мини-приложение', 'ℹ️ О боте'],
+            ]).resize()
+        )
+        
         return ctx.scene.leave()
     }
 })
@@ -89,14 +104,15 @@ aiScene.action('ask_more', async (ctx) => {
 
 aiScene.action('cancel_ai', async (ctx) => {
     await ctx.answerCbQuery('Отменено')
-    await ctx.reply('Возвращаюсь в главное меню...')
+    await ctx.reply(
+        'Главное меню:',
+        Markup.keyboard([
+            ['🎯 Пройти квест', '🤖 Получить совет от ИИ'],
+            ['🏆 Открыть мини-приложение', 'ℹ️ О боте'],
+        ]).resize()
+    )
     return ctx.scene.leave()
 })
 
-aiScene.action('back_to_menu', async (ctx) => {
-    await ctx.answerCbQuery()
-    await ctx.reply('Возвращаюсь в главное меню...')
-    return ctx.scene.leave()
-})
 
 export default aiScene

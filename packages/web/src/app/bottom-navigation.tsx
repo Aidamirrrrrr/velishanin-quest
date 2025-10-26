@@ -14,7 +14,7 @@ export function BottomNavigation() {
     const isActive = (path: string) => location.pathname === path
 
     return (
-        <nav className="fixed bottom-0 left-0 right-0 bg-telegram-secondary border-t border-telegram-hint/20 z-50">
+        <nav className="fixed bottom-0 left-0 right-0 bg-telegram-secondary/95 backdrop-blur-md border-t border-telegram-hint/20 shadow-lg z-50">
             <div className="max-w-2xl mx-auto px-4 py-3 flex justify-around items-center">
                 {NAV_ITEMS.map(({ path, icon, label }) => (
                     <Link

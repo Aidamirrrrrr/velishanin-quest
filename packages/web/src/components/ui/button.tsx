@@ -14,20 +14,21 @@ export function Button({
     fullWidth = false,
     active = false,
     className = '',
+    disabled = false,
     children,
     ...props
 }: ButtonProps) {
-    const baseClasses = 'rounded-full font-medium transition-all whitespace-nowrap'
+    const baseClasses = 'rounded-full font-medium transition-all whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed'
 
     const getVariantClasses = () => {
         if (active) {
-            return 'bg-telegram-button text-telegram-buttonText'
+            return 'bg-telegram-button text-telegram-buttonText shadow-md'
         }
 
         const variants = {
-            primary: 'bg-telegram-button text-telegram-buttonText hover:opacity-90',
-            secondary: 'bg-telegram-secondary text-telegram-text hover:opacity-80',
-            outline: 'border-2 border-telegram-button text-telegram-button hover:bg-telegram-button hover:text-telegram-buttonText',
+            primary: 'bg-telegram-button text-telegram-buttonText hover:opacity-90 active:scale-95 shadow-sm',
+            secondary: 'bg-telegram-secondary text-telegram-text hover:opacity-80 active:scale-95 shadow-sm',
+            outline: 'border-2 border-telegram-button text-telegram-button hover:bg-telegram-button hover:text-telegram-buttonText active:scale-95',
         }
 
         return variants[variant]
@@ -42,7 +43,7 @@ export function Button({
     const widthClass = fullWidth ? 'w-full' : ''
 
     return (
-        <button className={`${baseClasses} ${getVariantClasses()} ${sizeClasses[size]} ${widthClass} ${className}`} {...props}>
+        <button disabled={disabled} className={`${baseClasses} ${getVariantClasses()} ${sizeClasses[size]} ${widthClass} ${className}`} {...props}>
             {children}
         </button>
     )

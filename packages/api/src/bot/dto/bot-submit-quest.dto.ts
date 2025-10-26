@@ -16,6 +16,13 @@ export class BotSubmitQuestDto {
 
     @IsString()
     @IsNotEmpty()
+    public firstName: string
+
+    @IsString()
+    public username?: string
+
+    @IsString()
+    @IsNotEmpty()
     public questId: string
 
     @IsArray()

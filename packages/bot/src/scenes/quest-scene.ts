@@ -70,12 +70,15 @@ questScene.action(/answer_(\d+)/, async (ctx) => {
     } else {
         try {
             const telegramId = ctx.from?.id
-            if (!telegramId) {
+            const firstName = ctx.from?.first_name
+            const username = ctx.from?.username
+            
+            if (!telegramId || !firstName) {
                 await ctx.reply('Ошибка: не удалось определить пользователя')
                 return ctx.scene.leave()
             }
 
-            const result = await apiService.submitQuest(telegramId, 'programming', ctx.scene.session.answers)
+            const result = await apiService.submitQuest(telegramId, firstName, username, 'programming', ctx.scene.session.answers)
 
             const { totalScore, maxScore, percentage } = result
 
@@ -87,8 +90,15 @@ questScene.action(/answer_(\d+)/, async (ctx) => {
                 Markup.inlineKeyboard([
                     [Markup.button.callback('🏆 Таблица лидеров', 'open_webapp')],
                     [Markup.button.callback('🔄 Пройти ещё раз', 'restart_quest')],
-                    [Markup.button.callback('◀️ Главное меню', 'back_to_menu')],
                 ])
+            )
+            
+            await ctx.reply(
+                'Главное меню:',
+                Markup.keyboard([
+                    ['🎯 Пройти квест', '🤖 Получить совет от ИИ'],
+                    ['🏆 Открыть мини-приложение', 'ℹ️ О боте'],
+                ]).resize()
             )
         } catch (error: unknown) {
             console.error('Error submitting quest:', error)
