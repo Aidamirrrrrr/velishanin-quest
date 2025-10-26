@@ -63,15 +63,15 @@ aiScene.on('text', async (ctx) => {
 
         ctx.scene.session.waitingForQuestion = false
     } catch (error: unknown) {
-        console.error('OpenAI Error:', error)
+        console.error('Groq Error:', error)
 
         let errorMessage = 'Произошла ошибка при обращении к AI.'
 
         if (error && typeof error === 'object' && 'code' in error) {
             if (error.code === 'insufficient_quota') {
-                errorMessage = 'Квота OpenAI исчерпана. Попробуйте позже или обратитесь к администратору.'
+                errorMessage = 'Квота Groq исчерпана. Попробуйте позже или обратитесь к администратору.'
             } else if (error.code === 'invalid_api_key') {
-                errorMessage = 'Неверный API ключ OpenAI.'
+                errorMessage = 'Неверный API ключ Groq.'
             }
         }
 
