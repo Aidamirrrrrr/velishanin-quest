@@ -59,7 +59,6 @@ export class AuthService {
             })
         }
 
-        // Generate JWT token
         const payload: JwtPayload = {
             sub: user.id,
             telegramId: user.telegramId,

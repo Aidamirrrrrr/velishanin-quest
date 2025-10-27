@@ -18,7 +18,7 @@ bot.use(stage.middleware())
 bot.catch((err, ctx) => {
     console.error('Unhandled error while processing', ctx.update)
     console.error('Error:', err)
-    
+
     try {
         ctx.reply('⚠️ Произошла ошибка. Пожалуйста, попробуйте снова или начните заново с команды /start').catch(console.error)
     } catch (replyError) {
@@ -48,18 +48,14 @@ bot.command('start', async (ctx) => {
 bot.hears('🎯 Пройти квест', async (ctx) => {
     await ctx.reply(
         '🎮 Готов начать квест?\n\nЯ задам тебе 3 вопроса по программированию.\nЗа каждый правильный ответ — 10 очков!\n\nУдачи! 🚀',
-        Markup.inlineKeyboard([
-            [Markup.button.callback('▶️ Начать квест', 'start_quest')],
-        ])
+        Markup.inlineKeyboard([[Markup.button.callback('▶️ Начать квест', 'start_quest')]])
     )
 })
 
 bot.hears('🤖 Получить совет от ИИ', async (ctx) => {
     await ctx.reply(
         '🤖 AI Советчик активирован!\n\nЗадай мне любой вопрос по программированию, и я постараюсь помочь.\n\nПримеры вопросов:\n• Что такое async/await?\n• Как работает замыкание?\n• В чём разница между let и const?',
-        Markup.inlineKeyboard([
-            [Markup.button.callback('❓ Задать вопрос', 'ask_ai')],
-        ])
+        Markup.inlineKeyboard([[Markup.button.callback('❓ Задать вопрос', 'ask_ai')]])
     )
 })
 
@@ -68,30 +64,27 @@ bot.hears('🏆 Открыть мини-приложение', async (ctx) => {
 
     await ctx.reply(
         '🎨 Мини-приложение\n\nЗдесь ты можешь:\n• Посмотреть таблицу лидеров\n• Проверить свою статистику\n• Увидеть достижения',
-        Markup.inlineKeyboard([
-            [Markup.button.webApp('🚀 Открыть приложение', webAppUrl)],
-        ])
+        Markup.inlineKeyboard([[Markup.button.webApp('🚀 Открыть приложение', webAppUrl)]])
     )
 })
 
 bot.hears('ℹ️ О боте', async (ctx) => {
     await ctx.reply(
         `ℹ️ О боте\n\n` +
-        `Это тестовый бот для студии VELIZHANIN.\n\n` +
-        `🎯 Функции:\n` +
-        `• Интерактивный квест с вопросами\n` +
-        `• AI-советчик на базе Groq\n` +
-        `• Мини-приложение с таблицей лидеров\n` +
-        `• Отслеживание прогресса\n\n` +
-        `💻 Стек технологий:\n` +
-        `• TypeScript + Telegraf\n` +
-        `• NestJS + Prisma\n` +
-        `• React + TailwindCSS\n` +
-        `• PostgreSQL\n\n` +
-        `Разработано для тестового задания`
+            `Это тестовый бот для студии VELIZHANIN.\n\n` +
+            `🎯 Функции:\n` +
+            `• Интерактивный квест с вопросами\n` +
+            `• AI-советчик на базе Groq\n` +
+            `• Мини-приложение с таблицей лидеров\n` +
+            `• Отслеживание прогресса\n\n` +
+            `💻 Стек технологий:\n` +
+            `• TypeScript + Telegraf\n` +
+            `• NestJS + Prisma\n` +
+            `• React + TailwindCSS\n` +
+            `• PostgreSQL\n\n` +
+            `Разработано для тестового задания`
     )
 })
-
 
 bot.action('start_quest', async (ctx) => {
     await ctx.answerCbQuery()
@@ -103,13 +96,17 @@ bot.action('ask_ai', async (ctx) => {
     await ctx.scene.enter('ai')
 })
 
-bot.use(questScene.middleware())
-bot.use(aiScene.middleware())
-
 const healthServer = createServer((req, res) => {
-    if (req.method === 'GET' && req.url === '/healthz') {
+    if (req.method === 'GET' && (req.url === '/healthz' || req.url === '/' || req.url === '/health')) {
         res.writeHead(200, { 'Content-Type': 'application/json' })
-        res.end(JSON.stringify({ status: 'ok' }))
+        res.end(
+            JSON.stringify({
+                status: 'ok',
+                bot: bot.botInfo?.username || 'unknown',
+                uptime: process.uptime(),
+                timestamp: new Date().toISOString(),
+            })
+        )
         return
     }
 
@@ -124,6 +121,20 @@ healthServer.listen(config.HEALTHCHECK_PORT, () => {
 bot.launch().then(() => {
     console.log('🤖 Bot started successfully!')
     console.log(`📱 Bot username: @${bot.botInfo?.username}`)
+
+    if (process.env.RENDER || process.env.NODE_ENV === 'production') {
+        const PING_INTERVAL = 5 * 60 * 1000
+        setInterval(() => {
+            const selfUrl = process.env.RENDER_EXTERNAL_URL
+            if (selfUrl) {
+                console.log(`🏓 Keep-alive ping to ${selfUrl}`)
+                fetch(`${selfUrl}/healthz`)
+                    .then(() => console.log('✅ Keep-alive ping successful'))
+                    .catch((err) => console.error('❌ Keep-alive ping failed:', err.message))
+            }
+        }, PING_INTERVAL)
+        console.log(`📡 Keep-alive механизм активирован (ping каждые 14 минут)`)
+    }
 })
 
 const shutdown = (signal: ShutdownSignal) => {
@@ -132,6 +143,7 @@ const shutdown = (signal: ShutdownSignal) => {
         console.log('🩺 Healthcheck server stopped')
     })
     bot.stop(signal)
+    process.exit(0)
 }
 
 process.once('SIGINT', () => shutdown('SIGINT'))

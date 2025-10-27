@@ -1,3 +1,4 @@
+import { isAxiosError } from 'axios'
 import { Scenes, Markup } from 'telegraf'
 
 import { config } from '../config'
@@ -27,7 +28,7 @@ questScene.enter(async (ctx) => {
 
         const question = quest.questions[0]
         ctx.scene.session.currentQuestionId = question.id
-        
+
         await ctx.reply(
             `❓ Вопрос 1 из 3\n\n${question.text}`,
             Markup.inlineKeyboard(
@@ -39,6 +40,18 @@ questScene.enter(async (ctx) => {
         await ctx.reply('Ошибка загрузки квеста. Попробуйте позже.')
         return ctx.scene.leave()
     }
+})
+
+questScene.command('start', async (ctx) => {
+    await ctx.scene.leave()
+    const firstName = ctx.from.first_name
+    await ctx.reply(
+        `👋 Привет, ${firstName}!\n\nЯ - бот для программистского квеста!\n\nВыбери действие:`,
+        Markup.keyboard([
+            ['🎯 Пройти квест', '🤖 Получить совет от ИИ'],
+            ['🏆 Открыть мини-приложение', 'ℹ️ О боте'],
+        ]).resize()
+    )
 })
 
 questScene.action(/answer_(\d+)/, async (ctx) => {
@@ -64,7 +77,7 @@ questScene.action(/answer_(\d+)/, async (ctx) => {
         try {
             const quest = await apiService.getQuest('programming')
             const question = quest.questions[ctx.scene.session.currentQuestion]
-            
+
             ctx.scene.session.currentQuestionId = question.id
 
             await ctx.editMessageText(
@@ -83,7 +96,7 @@ questScene.action(/answer_(\d+)/, async (ctx) => {
             const telegramId = ctx.from?.id
             const firstName = ctx.from?.first_name
             const username = ctx.from?.username
-            
+
             if (!telegramId || !firstName) {
                 await ctx.reply('Ошибка: не удалось определить пользователя')
                 return ctx.scene.leave()
@@ -113,33 +126,29 @@ questScene.action(/answer_(\d+)/, async (ctx) => {
             )
         } catch (error: unknown) {
             console.error('Error submitting quest:', error)
-            
+
             let message = 'Попробуйте позже'
-            if (error && typeof error === 'object') {
-                if ('response' in error && error.response && typeof error.response === 'object') {
-                    const response = error.response as any
-                    console.error('API Response Error:')
-                    console.error('  Status:', response.status)
-                    console.error('  Status Text:', response.statusText)
-                    console.error('  Data:', response.data)
-                    
-                    if ('data' in response && response.data && typeof response.data === 'object' && 'message' in response.data) {
-                        message = String(response.data.message)
-                    } else if (response.status === 502) {
-                        message = 'API сервер временно недоступен. Попробуйте позже.'
-                    }
-                } else if ('message' in error) {
-                    const errorMessage = String((error as any).message)
-                    console.error('Error message:', errorMessage)
-                    
-                    if (errorMessage.includes('502')) {
-                        message = 'API сервер временно недоступен. Попробуйте позже.'
-                    } else {
-                        message = errorMessage
-                    }
+            if (isAxiosError(error) && error.response) {
+                console.error('API Response Error:')
+                console.error('  Status:', error.response.status)
+                console.error('  Status Text:', error.response.statusText)
+                console.error('  Data:', error.response.data)
+
+                if (error.response.data && typeof error.response.data === 'object' && 'message' in error.response.data) {
+                    message = String(error.response.data.message)
+                } else if (error.response.status === 502) {
+                    message = 'API сервер временно недоступен. Попробуйте позже.'
+                }
+            } else if (error instanceof Error) {
+                console.error('Error message:', error.message)
+
+                if (error.message.includes('502')) {
+                    message = 'API сервер временно недоступен. Попробуйте позже.'
+                } else {
+                    message = error.message
                 }
             }
-            
+
             await ctx.reply(`Ошибка сохранения результатов:\n${message}`)
         }
 

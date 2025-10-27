@@ -30,7 +30,12 @@ export const PROGRAMMING_QUEST: Quest = {
         {
             id: 'q4',
             text: 'Что означает REST API?',
-            options: ['Representational State Transfer', 'Remote Execution Service Tool', 'Reliable Encrypted Secure Transfer', 'Reactive State Protocol'],
+            options: [
+                'Representational State Transfer',
+                'Remote Execution Service Tool',
+                'Reliable Encrypted Secure Transfer',
+                'Reactive State Protocol',
+            ],
             correctAnswer: 0,
             points: 10,
         },

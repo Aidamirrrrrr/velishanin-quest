@@ -28,7 +28,8 @@ export function Button({
         const variants = {
             primary: 'bg-telegram-button text-telegram-buttonText hover:opacity-90 active:scale-95 shadow-sm',
             secondary: 'bg-telegram-secondary text-telegram-text hover:opacity-80 active:scale-95 shadow-sm',
-            outline: 'border-2 border-telegram-button text-telegram-button hover:bg-telegram-button hover:text-telegram-buttonText active:scale-95',
+            outline:
+                'border-2 border-telegram-button text-telegram-button hover:bg-telegram-button hover:text-telegram-buttonText active:scale-95',
         }
 
         return variants[variant]
@@ -43,7 +44,11 @@ export function Button({
     const widthClass = fullWidth ? 'w-full' : ''
 
     return (
-        <button disabled={disabled} className={`${baseClasses} ${getVariantClasses()} ${sizeClasses[size]} ${widthClass} ${className}`} {...props}>
+        <button
+            disabled={disabled}
+            className={`${baseClasses} ${getVariantClasses()} ${sizeClasses[size]} ${widthClass} ${className}`}
+            {...props}
+        >
             {children}
         </button>
     )

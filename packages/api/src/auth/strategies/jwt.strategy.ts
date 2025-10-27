@@ -7,7 +7,6 @@ import { PrismaService } from '../../prisma/prisma.service'
 
 import type { Request } from 'express'
 
-
 export interface JwtPayload {
     sub: number
     telegramId: number | bigint

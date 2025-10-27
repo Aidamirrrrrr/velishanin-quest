@@ -25,6 +25,18 @@ aiScene.enter(async (ctx) => {
     )
 })
 
+aiScene.command('start', async (ctx) => {
+    await ctx.scene.leave()
+    const firstName = ctx.from.first_name
+    await ctx.reply(
+        `👋 Привет, ${firstName}!\n\nЯ - бот для программистского квеста!\n\nВыбери действие:`,
+        Markup.keyboard([
+            ['🎯 Пройти квест', '🤖 Получить совет от ИИ'],
+            ['🏆 Открыть мини-приложение', 'ℹ️ О боте'],
+        ]).resize()
+    )
+})
+
 aiScene.on('text', async (ctx) => {
     if (!ctx.scene.session.waitingForQuestion) {
         return
@@ -57,9 +69,10 @@ aiScene.on('text', async (ctx) => {
             `💡 ${answer}`,
             Markup.inlineKeyboard([
                 [Markup.button.callback('❓ Задать ещё вопрос', 'ask_more')],
+                [Markup.button.callback('◀️ Назад в меню', 'back_to_menu')],
             ])
         )
-        
+
         ctx.scene.session.waitingForQuestion = false
     } catch (error: unknown) {
         console.error('Groq Error:', error)
@@ -87,8 +100,26 @@ aiScene.action('ask_more', async (ctx) => {
 
 aiScene.action('cancel_ai', async (ctx) => {
     await ctx.answerCbQuery('Отменено')
+    await ctx.reply(
+        'Возвращаюсь в главное меню',
+        Markup.keyboard([
+            ['🎯 Пройти квест', '🤖 Получить совет от ИИ'],
+            ['🏆 Открыть мини-приложение', 'ℹ️ О боте'],
+        ]).resize()
+    )
     return ctx.scene.leave()
 })
 
+aiScene.action('back_to_menu', async (ctx) => {
+    await ctx.answerCbQuery()
+    await ctx.reply(
+        'Возвращаюсь в главное меню',
+        Markup.keyboard([
+            ['🎯 Пройти квест', '🤖 Получить совет от ИИ'],
+            ['🏆 Открыть мини-приложение', 'ℹ️ О боте'],
+        ]).resize()
+    )
+    return ctx.scene.leave()
+})
 
 export default aiScene

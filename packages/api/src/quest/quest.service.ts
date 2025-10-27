@@ -22,16 +22,10 @@ export class QuestService {
         return null
     }
 
-    public async submitQuest(
-        telegramId: number,
-        firstName: string,
-        username: string | undefined,
-        questId: string,
-        answers: AnswerDto[]
-    ) {
+    public async submitQuest(telegramId: number, firstName: string, username: string | undefined, questId: string, answers: AnswerDto[]) {
         this.logger.log(`Submitting quest: ${questId} for user: ${telegramId}`)
         this.logger.debug(`Received answers: ${JSON.stringify(answers)}`)
-        
+
         const quest = await this.getQuestById(questId)
         if (!quest) {
             this.logger.error(`Quest not found: ${questId}`)
@@ -58,7 +52,7 @@ export class QuestService {
             const question = quest.questions.find((q) => q.id === answer.questionId)
             if (!question) {
                 this.logger.error(`Question not found: ${answer.questionId} in quest: ${questId}`)
-                this.logger.error(`Available questions: ${quest.questions.map(q => q.id).join(', ')}`)
+                this.logger.error(`Available questions: ${quest.questions.map((q) => q.id).join(', ')}`)
                 throw new NotFoundException(`Question ${answer.questionId} not found in quest ${questId}`)
             }
             const isCorrect = answer.selectedOption === question.correctAnswer
