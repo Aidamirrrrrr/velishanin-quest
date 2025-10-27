@@ -4,7 +4,7 @@ import { UserWelcomeCard } from './user-welcome-card'
 import useTelegramStore from '@/stores/use-telegram-store'
 
 export default function Home() {
-    const { user, webApp } = useTelegramStore()
+    const { user } = useTelegramStore()
 
     return (
         <div className="min-h-screen bg-telegram-bg p-4">
@@ -17,10 +17,10 @@ export default function Home() {
 
                 {user && <UserWelcomeCard user={user} />}
 
-                <NavigationGrid webApp={webApp} />
+                <NavigationGrid />
 
                 <div className="mt-8 text-center text-telegram-hint text-sm">
-                    <p>💡 Пройди квест в боте, чтобы улучшить свои результаты</p>
+                    <p>💡 Квесты проходятся только в боте</p>
                 </div>
             </div>
         </div>

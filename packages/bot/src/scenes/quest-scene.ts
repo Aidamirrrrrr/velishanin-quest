@@ -1,7 +1,6 @@
 import { isAxiosError } from 'axios'
 import { Scenes, Markup } from 'telegraf'
 
-import { config } from '../config'
 import { apiService } from '../services/api.service'
 
 import type { Answer } from '../types/quest.types'
@@ -154,17 +153,6 @@ questScene.action(/answer_(\d+)/, async (ctx) => {
 
         return ctx.scene.leave()
     }
-})
-
-questScene.action('restart_quest', async (ctx) => {
-    await ctx.answerCbQuery()
-    return ctx.scene.reenter()
-})
-
-questScene.action('open_webapp', async (ctx) => {
-    await ctx.answerCbQuery()
-    const webAppUrl = config.WEB_APP_URL
-    await ctx.reply('Открой мини-приложение:', Markup.inlineKeyboard([[Markup.button.webApp('🚀 Открыть', webAppUrl)]]))
 })
 
 export default questScene

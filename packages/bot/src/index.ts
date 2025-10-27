@@ -96,6 +96,17 @@ bot.action('ask_ai', async (ctx) => {
     await ctx.scene.enter('ai')
 })
 
+bot.action('restart_quest', async (ctx) => {
+    await ctx.answerCbQuery()
+    await ctx.scene.enter('quest')
+})
+
+bot.action('open_webapp', async (ctx) => {
+    await ctx.answerCbQuery()
+    const webAppUrl = config.WEB_APP_URL
+    await ctx.reply('Открой мини-приложение:', Markup.inlineKeyboard([[Markup.button.webApp('🚀 Открыть', webAppUrl)]])) 
+})
+
 const healthServer = createServer((req, res) => {
     if (req.method === 'GET' && (req.url === '/healthz' || req.url === '/' || req.url === '/health')) {
         res.writeHead(200, { 'Content-Type': 'application/json' })
